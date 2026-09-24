@@ -1,5 +1,5 @@
 (ns foundrycoord.actor-test
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [foundrycoord.actor :as actor]
             [foundrycoord.store :as store]))
 
