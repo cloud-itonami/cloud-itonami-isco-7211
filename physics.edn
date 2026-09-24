@@ -1,0 +1,36 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:physics` runs it.
+;;
+;; README "Robotics premise": a foundry scheduling/logistics coordination
+;; robot for metal moulders and coremakers (ISCO 7211) schedules the crew,
+;; logs casting batches, materials usage and progress, and coordinates
+;; casting-materials supply orders; it never pours or makes moulds. Its
+;; physical work is moving cores and closed moulds to the pouring line; the
+;; physics its heat-exposure concerns depend on is how hot the outside of a
+;; sand mould gets after an aluminium pour.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isco-7211"
+ :cases
+ [{:id :mould-to-pouring-line
+   :kind :transport
+   :procedure "logistics robot carries a closed green-sand mould (flask) 35 m from the moulding station to the pouring line"
+   :params {:mass-kg 200.0 :distance-m 35.0 :v-max-mps 0.8 :a-max-mps2 0.4
+            :brake-decel-mps2 0.8 :drive-force-n 700.0 :crr 0.03
+            :cog-height-m 0.40 :support-half-length-m 0.45 :payload-cog-height-m 0.75}
+   :sweep {:param :payload-kg :values [100.0 250.0 400.0 600.0 900.0]}
+   :quantity :cycle-time-s
+   :limit {:max 60.0 :basis "estimate: one mould per minute keeps the pouring line at its planned rate"}
+   :boundary {:lo 20.0 :hi 2000.0}}
+  {:id :mould-wall-after-pour
+   :kind :thermal
+   :procedure "aluminium at ~700 C fills a green-sand mould; the metal face stays hot for 10 min while it solidifies, then the casting has cooled to ~250 C; the flask outer face (convection to the shop at 30 C) behind 75 mm of sand is where the robot gripper and the crew touch it; how long after the pour the flask is handled is swept"
+   :params {:conductivity-w-mk 0.60 :density-kg-m3 1500.0 :specific-heat-j-kgk 1100.0
+            :t0-c 30.0 :t-hot-c 700.0 :front-fixed? true :heating-s 600.0 :t-cool-c 250.0 :thickness-m 0.075
+            :t-back-ambient-c 30.0 :h-back-w-m2k 10.0 :threshold-c 80.0}
+   :sweep {:param :duration-s :values [600.0 1200.0 1800.0 2400.0 3600.0 5400.0]}
+   :quantity :final-back-c
+   :limit {:max 80.0 :basis "estimate: gripper-pad and handling limit for the flask outer face"}
+   :boundary {:lo 300.0 :hi 7200.0}}]}
