@@ -1,7 +1,7 @@
 (ns foundrycoord.store
   "SSoT for the ISCO-08 7211 metal moulding and coremaking foundry
   scheduling/logistics coordination actor (itonami actor pattern,
-  ADR-2607121000 / CLAUDE.md Actors section; README's 'Robotics
+  ADR-2607121000 / AGENTS.md Actors section; README's 'Robotics
   premise' — a foundry scheduling/logistics coordination robot
   performs crew scheduling, casting-batch/materials-usage/progress
   record logging and casting-materials supply-order coordination for
